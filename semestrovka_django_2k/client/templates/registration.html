@@ -1,0 +1,10 @@
+{% extends 'index.html' %}
+{% block login %}
+<div class="large-offset-3 large-6 columns">
+    <form action="{% url "registration" %}{{ next }}" method="POST">
+        {% csrf_token %}
+        {{ form }}
+        <input class="button" type="submit" value="Sign up">
+    </form>
+</div>
+{% endblock %}

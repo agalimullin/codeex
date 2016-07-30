@@ -1,0 +1,32 @@
+{% extends 'index.html' %}
+{% block profile %}
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Title</title>
+    </head>
+    <body>
+    <div style="text-align: center">
+        <img src="{{ profile.avatar.url }}" width="300" height="300">
+        {% if profile.user.first_name %}
+            <p>Name: {{ profile.user.first_name }}</p>
+        {% endif %}
+        {% if profile.user.last_name %}
+            <p>Surname: {{ profile.user.last_name }}</p>
+        {% endif %}
+        {% if profile.user.email %}
+            <p>E-mail: {{ profile.user.email }}</p>
+        {% endif %}
+        {% if profile.site %}
+            <p>Site: {{ profile.site }}</p>
+        {% endif %}
+            <form action="{% url 'changeimage' %}" method="POST" enctype="multipart/form-data">
+                {% csrf_token %}
+                {{ form.as_p }}
+                <input type="submit" class="button" value="Change image">
+            </form>
+    </div>
+    </body>
+    </html>
+{% endblock %}

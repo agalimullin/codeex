@@ -1,0 +1,27 @@
+{% extends 'index.html' %}
+{% block reviews %}
+<div class="tabs-content" data-tabs-content="example-tabs">
+    <div class="tabs-panel is-active" id="panel1">
+        <h4>Reviews:</h4>
+        {% for review in reviews %}
+            <div class="media-object stack-for-small">
+                <div class="media-object-section">
+                    <h5> {{ review.review_author }}</h5>
+                    <p>{{ review.review_text }}
+{#                                                        {% ifequal review.review_author|stringformat:"s" username %}#}
+{#                                                            <a href="{% url 'catalog:del_comment' review.id %}">Delete</a>#}
+{#                                                        {% endifequal %}#}
+                    </p>
+                    <p class="help-block">{{ review.review_date }}</p>
+                </div>
+            </div>
+        {% endfor %}
+        <div>
+            <form action="{% url 'goldenshop:add_reviews' %}" method="POST">
+                {{ form }}{% csrf_token %}
+                <input type="submit" class="button" value="Add review">
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

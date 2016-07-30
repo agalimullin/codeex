@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+<meta charset="UTF-8">
+<html lang="en">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.min.css">
+    <link href='http://cdnjs.cloudflare.com/ajax/libs/foundicons/3.0.0/foundation-icons.css' rel='stylesheet'
+          type='text/css'>
+    <link rel="stylesheet" href="{% static 'css/foundation.min.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'css/foundation-icons.css' %}" type="text/css">
+    <link href='{% static 'css/main.css' %}' rel='stylesheet' type='text/css'>
+    <script src="http://code.jquery.com/jquery-2.1.4.min.js" type="text/javascript" charset="utf-8"></script>
+    <title>Golden Store</title>
+</head>
+
+<body>
+<div class="top-bar">
+    <div class="row">
+        <div class="top-bar-left">
+            <ul class="dropdown menu" data-dropdown-menu>
+                <li class="menu-text"><a href="/">Store</a></li>
+                <li class="has-submenu">
+                    <a href="#">Categories</a>
+                    <ul class="submenu menu vertical" data-submenu>
+                        {% for category in categories %}
+                            <li><a href="{{ category.get_absolute_url }}">{{ category.category_title }}</a></li>
+                        {% endfor %}
+                    </ul>
+                </li>
+                {% if username %}
+                    <li class="active"><a href="{% url "cart" %}">Cart</a></li>
+                    <li class="active"><a href="{% url "logout" %}">Log out ({{ username }})</a></li>
+                    <li class="active"><a href="{% url "profile" %}">Profile ({{ username }})</a></li>
+                {% else %}
+                    <li class="active"><a href="{% url "login" %}">Log in</a></li>
+                    <li class="active"><a href="{% url "registration" %}">Registration</a></li>
+                {% endif %}
+            </ul>
+        </div>
+        <div class="top-bar-right">
+            <div class="row collapse">
+                    <form method="GET" id="textarea" action="{% url 'catalog:search' %}" onkeyup="countChar(this)">
+                        <div class="large-8 small-9 columns">
+                            <input type="text" name="search" placeholder="Search product">
+                        </div>
+                        <div class="large-4 small-3 columns">
+                            <button type="submit" class="alert button expand">Search</button>
+                        </div>
+                    </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% block login %}{% endblock %}
+<div style="min-height: 700px">
+{% block one_product %}{% endblock %}
+{% block catalog %}{% endblock %}
+{% block reviews %}{% endblock %}
+{% block profile %}{% endblock %}
+{% block about %}{% endblock %}
+{% block cart %}{% endblock %}
+{% block contacts %}{% endblock %}
+</div>
+
+<div class="row column">
+    <hr>
+    <ul class="menu" >
+        <li>Store</li>
+        <li><a href="/">Home</a></li>
+        <li><a href="{% url "goldenshop:about" %}">About</a></li>
+        <li><a href="{% url "goldenshop:contact" %}">Contact</a></li>
+        <li><a href="{% url "goldenshop:reviews" %}">Reviews</a></li>
+        <li class="float-right">Copyright 2016</li>
+    </ul>
+</div>
+<script src="http://dhbhdrzi4tiry.cloudfront.net/cdn/sites/foundation.js"></script>
+<script src="{% static 'js/foundation.js' %}"></script>
+<script>
+    $(document).foundation();
+</script>
+</body>
+</html>

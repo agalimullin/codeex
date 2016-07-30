@@ -1,0 +1,142 @@
+{% extends 'index.html' %}
+{% block one_product %}
+    {% load imagekit %}
+    {% load staticfiles %}
+    <html>
+    <head>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+        <script>
+            $(function () {
+                $('#likes').click(function () {
+                    $.get('/products/add_like/{{ product.id }}', function (data) {
+                        $('#like_count').html(data);
+                    });
+                });
+            });
+        </script>
+        <script type='text/javascript'>
+            function countChar(val) {
+                var len = val.value.length;
+                var text_max = 200;
+
+                if (len >= text_max) {
+                    val.value = val.value.substring(0, text_max);
+                    $('#textarea_feedback').text((text_max - len));
+                } else {
+                    $('#textarea_feedback').text((text_max - len));
+                }
+            }
+        </script>
+    </head>
+    <body>
+    <br>
+    <div class="row columns">
+        <nav aria-label="You are here:" role="navigation">
+            <ul class="breadcrumbs">
+                <li><a href="/">Home</a></li>
+                <li><a href="/categories/{{ product.product_category.id }}/">{{ product.product_category }}</a></li>
+                <li>
+                    <span class="show-for-sr">Current: </span> {{ product.product_title }}
+                </li>
+            </ul>
+        </nav>
+    </div>
+
+    <div class="row">
+        <div class="medium-6 columns">
+            {% thumbnail '300x300' product.product_img -- class="thumbnail" %}
+        </div>
+        <div class="medium-6 large-5 columns">
+            <h3>{{ product.product_title }}</h3>
+            <p> {{ product.product_short_discription }}</p>
+            <p>{{ product.product_distributor }}</p>
+            <p>{{ product.product_cost }}$</p>
+            {% if username %}
+                <button id="likes"><img
+                        src="{% static "images/like.jpg" %} " type="button" alt="Like"
+                        width="25px" height="25px">
+                    <span id="like_count"> {{ product.likes }} </span>
+                </button>
+            {% endif %}
+            {% if product.available %}
+                {% if username %}
+                    <form action="{% url 'add_to_cart' product.id %}" method="POST">
+                        <div class="row">
+                            <div class="small-3 columns">
+                                <label for="middle-label" class="middle">Quantity</label>
+                            </div>
+                            {% csrf_token %}
+                            <div class="small-9 columns">
+                                {{ cart_add_form.quantity }}
+                            </div>
+                        </div>
+                        <input type="submit" class="button large expanded" value="Add to cart">
+                    </form>
+                {% else %}
+                    <H5>Please, log in to add this item to your cart</H5>
+                {% endif %}
+            {% else %}
+                <p>Not available :(</p>
+                <p>Please check back later</p>
+            {% endif %}
+        </div>
+    </div>
+    <div class="column row">
+        <hr>
+        <ul class="tabs" data-tabs id="example-tabs">
+            <li class="tabs-title is-active"><a href="#panel1" aria-selected="true">Comments</a></li>
+            <li class="tabs-title"><a href="#panel2">Similar Products</a></li>
+        </ul>
+        <div class="tabs-content" data-tabs-content="example-tabs">
+            <div class="tabs-panel is-active" id="panel1">
+                <h4>Comments</h4>
+                {% for comment in comments %}
+                    <div class="media-object stack-for-small">
+                        <div class="media-object-section">
+                            {#                            <img src="{{ profile.avatar.url }}" width="300" height="300">#}
+                        </div>
+                        <div class="media-object-section">
+                            <h5> {{ comment.comment_author }}</h5>
+                            <p>{{ comment.comment_text }}
+                                {% ifequal comment.comment_author|stringformat:"s" username %}
+                                    <a href="{% url 'catalog:del_comment' comment.id %}">Delete</a>
+                                {% endifequal %}
+                            </p>
+                            <p class="help-block">{{ comment.comment_date }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+                {% if username %}
+                    <div id="textarea_feedback">140</div>
+                    <form method="post" action="{% url 'catalog:add_comment' product.id %}">
+                        <textarea name="comment" id="textarea" maxlength="140" onkeyup="countChar(this)"></textarea>
+                        {% csrf_token %}
+                        <input type="submit">
+                    </form>
+                {% endif %}
+            </div>
+
+            <div class="tabs-panel " id="panel2">
+                <div class="row medium-up-3 large-up-5">
+
+                    {% for other_product in other_products %}
+                        <div class="column">
+                            {% thumbnail '350x350' other_product.product_img -- class="thumbnail" %}
+                            <h5>{{ other_product.product_title }}
+                                <small><br>{{ other_product.product_cost }} $</small>
+                            </h5>
+                            <p>{{ other_product.product_short_discription }}</p>
+                            <a href="{{ other_product.get_absolute_url }}" class="button hollow tiny expanded">See
+                                more</a>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+
+</body>
+</html>
+
